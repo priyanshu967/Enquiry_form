@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+            font-family: sans-serif;
+        }
+        form{
+            width: 400px;
+            margin: auto;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0px 0px 0px 2px ;
+            padding: 10px;
+        }
+        form h2{
+            padding: 20px 0px;
+        }
+        form label{
+            display: block;
+            font-size: 16px;
+
+        }
+        form input{
+            width: 100%;
+            height: 30px;
+            margin-bottom: 10px;
+        }
+        form button{
+            padding: 10px 25px; 
+            background-color: aqua;
+            border: none;
+            cursor: pointer;
+        }
+        .main{
+
+            width: 1320px;
+            display: flex;
+            flex-wrap: wrap;
+            margin: auto;
+             background: linear-gradient(135deg,#00feba,#5b548a); 
+        }
+        .items{
+            flex-basis: 23%;
+            margin: 1%;
+            box-shadow: 0px 0px 10px 2px #ccc;
+            padding: 1%;
+            position: relative;
+        }
+        .items h5{
+            margin-top: 5px;
+        }
+        .items span{
+            position: absolute;
+            font-size: 30px;
+            cursor: pointer;
+            right: 0px;
+            top: 0px;
+
+            
+        }
+        #clrr{
+            display: table;
+            margin: auto;
+            padding: 10px 25px; 
+            background-color: red;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+            
+            
+        }
+    
+    </style>
+</head>
+<body>
+    <form action="">
+        <h2>Enquiry Now</h2>
+        <label for="">Name</label>
+        <input type="text" name="uname" required>
+        <label for="">Email</label>
+        <input type="text" name="email" required>
+        <label for="">Phone</label>
+        <input type="text" name="phone" required>
+        <button>Save</button>
+    </form>
+   
+    <button id="clrr">Clear All</button>
+    <div class="main">
+        <div class="items">
+            <span>&times;</span>
+            <h5>Name</h5>
+            <div>ABC</div>
+
+            <h5>Email</h5>
+            <div>ABC@gmail.com</div>
+
+            <h5>phone</h5>
+            <div>46644866446</div>
+        </div>
+    </div>
+</body>
+<script>
+    // let user = [
+    //     {
+    //         name: "priyanshu kumar",
+    //         email: "sal@gamil.com"
+
+    //     },
+    //     {
+    //         name:"laud kumar",
+    //         email: "laud@gamil.com"
+
+    //     },
+    // ]
+    // localStorage.setItem("name",JSON.stringify(user))
+    //console.log(JSON.parse(localStorage.getItem("name")))
+
+
+    let form = document.querySelector("form");
+    let main = document.querySelector(".main");
+    let clear = document.querySelector("#clrr");
+
+    form.addEventListener("submit" , (event) => {
+        let name = event.target.uname.value;        //ye wala dekho
+        let email = event.target.email.value;
+        let phone = event.target.phone.value;
+
+        // Retrieve userData from localStorage or initialize as an empty array
+        let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+
+        let matched = 0;
+        for(let v of userData){
+            if(v.email === email || v.phone === phone){
+                matched = 1;
+                break;
+            }
+        }
+        if(matched == 1){
+            alert("email or phone is same");
+        }
+        else{
+        userData.push({
+            'name': name,
+            'email': email,   //name key ye name
+            'phone': phone,
+        })
+        
+        localStorage.setItem("userDetails",JSON.stringify(userData))
+
+        event.target.reset();
+
+        // Call the display function to show the updated data jab form sub,it hoga
+        DisplyData();
+        event.preventDefault();  // Prevent form submission
+        // console.log(userData,JSON.stringify(userData));
+        // console.log(name,email,phone)
+        }
+    })
+
+    let DisplyData = () =>{
+        // Retrieve userData from localStorage
+        let userData = JSON.parse(localStorage.getItem("userDetails")) ?? []
+        let finalData = '';   // Initialize empty string for HTML content
+
+        // Loop over userData and generate HTML for each entry
+        userData.forEach((element,i) => {
+
+            console.log(element);
+            finalData += `<div class="items">
+            <span onclick="removeData(${i})">&times;</span>
+            <h5>Name</h5>
+            <div>${element.name}</div>
+
+            <h5>Email</h5>
+            <div>${element.email}</div>
+
+            <h5>phone</h5>
+            <div>${element.phone}</div>
+            </div>
+            `
+        });
+
+        //console.log(finalData)
+        //  generated HTML ko main  div me dalega
+        main.innerHTML = finalData;
+    }
+
+    let removeData = (index) => {
+        //alert(index)
+
+        let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+        userData.splice(index,1);
+        localStorage.setItem("userDetails",JSON.stringify(userData))
+        DisplyData();
+    }
+
+    clear.addEventListener("click",() => {
+        localStorage.clear("userData");
+        DisplyData();
+    })
+    // Display data when the page loads
+    DisplyData();
+</script>
+</html>
